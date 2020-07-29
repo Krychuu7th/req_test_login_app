@@ -30,26 +30,32 @@ export class AppComponent {
     console.log(this.indexOfLogins);
     console.log(this.password);
     console.log(this.indexOfPasswords);
-    if(this.indexOfLogins == -1 && this.indexOfPasswords == -1){
-      this.invalidLogin = true;
-      this.validLogin = false;
-      this.errorMessage = 'Invalid login or password';
-      this.sendRequest();
-    } else {
-      if (this.indexOfLogins == this.indexOfPasswords) {
-        this.login = '';
-        this.password = '';
-        this.invalidLogin = false;
-        this.validLogin = true;
-        this.errorMessage = 'LOGGED IN';
-        this.sendRequest();
-      }
-      else {
+
+    if(this.login != '' && this.password != ''){
+      if (this.indexOfLogins == -1 && this.indexOfPasswords == -1) {
         this.invalidLogin = true;
         this.validLogin = false;
         this.errorMessage = 'Invalid login or password';
         this.sendRequest();
+      } else {
+        if (this.indexOfLogins == this.indexOfPasswords) {
+          this.login = '';
+          this.password = '';
+          this.invalidLogin = false;
+          this.validLogin = true;
+          this.errorMessage = 'LOGGED IN';
+          this.sendRequest();
+        } else {
+          this.invalidLogin = true;
+          this.validLogin = false;
+          this.errorMessage = 'Invalid login or password';
+          this.sendRequest();
+        }
       }
+    } else {
+      this.invalidLogin = true;
+      this.validLogin = false;
+      this.errorMessage = 'Both fields are required';
     }
   }
 
