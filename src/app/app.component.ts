@@ -20,6 +20,7 @@ export class AppComponent {
   errorMessage: string;
 
   guid = 'a8961058-a6ee-4d71-b325-9aca83b22237';
+  log: string;
   xmlrequest: XMLHttpRequest;
   params: string;
 
@@ -36,19 +37,22 @@ export class AppComponent {
         this.invalidLogin = true;
         this.validLogin = false;
         this.errorMessage = 'Invalid login or password';
+        this.log = `Invalid login or password (login: ${this.login}, password: ${this.password})`;
         this.sendRequest();
       } else {
         if (this.indexOfLogins == this.indexOfPasswords) {
-          this.login = '';
-          this.password = '';
           this.invalidLogin = false;
           this.validLogin = true;
           this.errorMessage = 'LOGGED IN';
+          this.log = `Logged in successfully (login: ${this.login}, password: ${this.password})`;
+          this.login = '';
+          this.password = '';
           this.sendRequest();
         } else {
           this.invalidLogin = true;
           this.validLogin = false;
           this.errorMessage = 'Invalid login or password';
+          this.log = `Invalid login or password (login: ${this.login}, password: ${this.password})`;
           this.sendRequest();
         }
       }
@@ -68,6 +72,7 @@ export class AppComponent {
                           <std:sendStatus>
                             <guid>${this.guid}</guid>
                             <status>${this.validLogin}</status>
+                            <log>${this.log}</log>
                           </std:sendStatus>
                         </soap:Body>
                       </soap:Envelope>`;
