@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
   logins: string[] = ['login', 'login2', 'login3', 'login4'];
   passwords: string[] = ['pass', 'pass2', 'pass3', 'pass4'];
 
@@ -16,13 +16,26 @@ export class AppComponent {
   indexOfPasswords: number;
 
   invalidLogin: boolean;
-  validLogin:boolean;
+  validLogin = true;
   errorMessage: string;
 
   guid = 'a8961058-a6ee-4d71-b325-9aca83b22237';
-  log: string;
+  log = 'Application is running';
   xmlrequest: XMLHttpRequest;
   params: string;
+
+  dataRefreshTime = 5; //in mins
+  intervalOfStatusReq;
+
+  ngOnInit() {
+    this.sendStatusRequest();
+    this.intervalOfStatusReq = setInterval(() => this.sendStatusRequest(), this.dataRefreshTime*60000);
+  }
+
+  ngOnDestroy() {
+    if(this.intervalOfStatusReq)
+      clearInterval(this.intervalOfStatusReq);
+  }
 
   logInto() {
     this.indexOfLogins = this.logins.indexOf(this.login);
@@ -38,22 +51,20 @@ export class AppComponent {
         this.validLogin = false;
         this.errorMessage = 'Invalid login or password';
         this.log = `Invalid login or password (login: ${this.login}, password: ${this.password})`;
-        this.sendRequest();
+        this.sendErrorRequest();
       } else {
         if (this.indexOfLogins == this.indexOfPasswords) {
           this.invalidLogin = false;
           this.validLogin = true;
           this.errorMessage = 'LOGGED IN';
-          this.log = `Logged in successfully (login: ${this.login}, password: ${this.password})`;
           this.login = '';
           this.password = '';
-          this.sendRequest();
         } else {
           this.invalidLogin = true;
           this.validLogin = false;
           this.errorMessage = 'Invalid login or password';
           this.log = `Invalid login or password (login: ${this.login}, password: ${this.password})`;
-          this.sendRequest();
+          this.sendErrorRequest();
         }
       }
     } else {
@@ -63,7 +74,7 @@ export class AppComponent {
     }
   }
 
-  sendRequest(){
+  sendStatusRequest(){
     this.xmlrequest = new XMLHttpRequest();
     this.params = `<?xml version="1.0" encoding="utf-8"?>
                       <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
@@ -79,6 +90,29 @@ export class AppComponent {
 
     this.xmlrequest.open("POST",
       "http://localhost:9090/ws/applicationStatus");
+
+    this.xmlrequest.setRequestHeader('Content-type',
+      'text/xml');
+
+    this.xmlrequest.send(this.params);
+
+  }
+
+  sendErrorRequest(){
+    this.xmlrequest = new XMLHttpRequest();
+    this.params = `<?xml version="1.0" encoding="utf-8"?>
+                      <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+                                     xmlns:std="http://prktices6.pl/serwis">
+                        <soap:Body>
+                          <std:sendError>
+                            <guid>${this.guid}</guid>
+                            <log>${this.log}</log>
+                          </std:sendError>
+                        </soap:Body>
+                      </soap:Envelope>`;
+
+    this.xmlrequest.open("POST",
+      "http://localhost:9090/ws/applicationError");
 
     this.xmlrequest.setRequestHeader('Content-type',
       'text/xml');
