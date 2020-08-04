@@ -28,12 +28,15 @@ export class AppComponent implements OnInit, OnDestroy {
   intervalOfStatusReq;
 
   ngOnInit() {
-    this.sendStatusRequest();
-    this.intervalOfStatusReq = setInterval(() => this.sendStatusRequest(), this.dataRefreshTime*60000);
+    this.sendRequest(true);
+    this.intervalOfStatusReq = setInterval(() => {
+      this.log = 'Application is running';
+      this.sendRequest(true);
+    }, this.dataRefreshTime * 60000);
   }
 
   ngOnDestroy() {
-    if(this.intervalOfStatusReq)
+    if (this.intervalOfStatusReq)
       clearInterval(this.intervalOfStatusReq);
   }
 
@@ -45,13 +48,13 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log(this.password);
     console.log(this.indexOfPasswords);
 
-    if(this.login != '' && this.password != ''){
+    if (this.login != '' && this.password != '') {
       if (this.indexOfLogins == -1 && this.indexOfPasswords == -1) {
         this.invalidLogin = true;
         this.validLogin = false;
         this.errorMessage = 'Invalid login or password';
         this.log = `Invalid login or password (login: ${this.login}, password: ${this.password})`;
-        this.sendErrorRequest();
+        this.sendRequest(false);
       } else {
         if (this.indexOfLogins == this.indexOfPasswords) {
           this.invalidLogin = false;
@@ -64,7 +67,7 @@ export class AppComponent implements OnInit, OnDestroy {
           this.validLogin = false;
           this.errorMessage = 'Invalid login or password';
           this.log = `Invalid login or password (login: ${this.login}, password: ${this.password})`;
-          this.sendErrorRequest();
+          this.sendRequest(false);
         }
       }
     } else {
@@ -74,7 +77,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  sendStatusRequest(){
+  sendRequest(status: boolean) {
     this.xmlrequest = new XMLHttpRequest();
     this.params = `<?xml version="1.0" encoding="utf-8"?>
                       <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
@@ -82,37 +85,14 @@ export class AppComponent implements OnInit, OnDestroy {
                         <soap:Body>
                           <std:sendStatus>
                             <guid>${this.guid}</guid>
-                            <status>true</status>
-                            <log>Application is running</log>
+                            <status>${status}</status>
+                            <log>${this.log}</log>
                           </std:sendStatus>
                         </soap:Body>
                       </soap:Envelope>`;
 
     this.xmlrequest.open("POST",
       "http://localhost:9090/ws/applicationStatus");
-
-    this.xmlrequest.setRequestHeader('Content-type',
-      'text/xml');
-
-    this.xmlrequest.send(this.params);
-
-  }
-
-  sendErrorRequest(){
-    this.xmlrequest = new XMLHttpRequest();
-    this.params = `<?xml version="1.0" encoding="utf-8"?>
-                      <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
-                                     xmlns:std="http://prktices6.pl/serwis">
-                        <soap:Body>
-                          <std:sendError>
-                            <guid>${this.guid}</guid>
-                            <log>${this.log}</log>
-                          </std:sendError>
-                        </soap:Body>
-                      </soap:Envelope>`;
-
-    this.xmlrequest.open("POST",
-      "http://localhost:9090/ws/applicationError");
 
     this.xmlrequest.setRequestHeader('Content-type',
       'text/xml');
