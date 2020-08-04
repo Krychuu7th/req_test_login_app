@@ -16,7 +16,7 @@ export class AppComponent implements OnInit, OnDestroy {
   indexOfPasswords: number;
 
   invalidLogin: boolean;
-  validLogin = true;
+  validLogin = false;
   errorMessage: string;
 
   guid = 'a8961058-a6ee-4d71-b325-9aca83b22237';
@@ -82,8 +82,8 @@ export class AppComponent implements OnInit, OnDestroy {
                         <soap:Body>
                           <std:sendStatus>
                             <guid>${this.guid}</guid>
-                            <status>${this.validLogin}</status>
-                            <log>${this.log}</log>
+                            <status>true</status>
+                            <log>Application is running</log>
                           </std:sendStatus>
                         </soap:Body>
                       </soap:Envelope>`;
