@@ -1,4 +1,6 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
+import {coerceNumberProperty} from "@angular/cdk/coercion";
+import {newArray} from "@angular/compiler/src/util";
 
 @Component({
   selector: 'app-root',
@@ -19,20 +21,48 @@ export class AppComponent implements OnInit, OnDestroy {
   validLogin = false;
   errorMessage: string;
 
-  guid = 'a8961058-a6ee-4d71-b325-9aca83b22237';
+  guid = '34071189-ab3d-47ff-9ee1-aca6fa806bc9';
   log = 'Application is running';
   xmlrequest: XMLHttpRequest;
   params: string;
 
-  dataRefreshTime = 5; //in mins
+  dataRefreshTime = 0.5; //in mins
   intervalOfStatusReq;
+  data: number[] = Array<number>();
+  lalala;
 
   ngOnInit() {
     this.sendRequest(true);
     this.intervalOfStatusReq = setInterval(() => {
-      this.log = 'Application is running';
-      this.sendRequest(true);
+
+
+      console.log('Initial: '+ this.data);
+
+      try{
+        let random = this.getRandomInt(0,1);
+        console.log(random);
+        if(random < 1){
+          this.lalala;
+        }
+        else {
+          for(let i = 0; i < 5; i++){
+            this.data[i] = this.getRandomInt(1,10);
+          }
+        }
+        console.log(this.data);
+        this.log = 'APP_OK: Created array contains '+ this.data;
+        console.log(this.log);
+        this.sendRequest(true);
+      } catch (e) {
+        console.log(e);
+        this.log = 'APP_ERROR: '+ e;
+        console.log(this.log);
+        this.sendRequest(false);
+
+      }
+
     }, this.dataRefreshTime * 60000);
+
   }
 
   ngOnDestroy() {
@@ -99,5 +129,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.xmlrequest.send(this.params);
 
+  }
+
+  getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 }
