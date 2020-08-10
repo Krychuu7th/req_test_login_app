@@ -29,7 +29,6 @@ export class AppComponent implements OnInit, OnDestroy {
   dataRefreshTime = 0.5; //in mins
   intervalOfStatusReq;
   data: number[] = Array<number>();
-  lalala;
 
   ngOnInit() {
     this.sendRequest(true);
@@ -42,7 +41,7 @@ export class AppComponent implements OnInit, OnDestroy {
         let random = this.getRandomInt(0,1);
         console.log(random);
         if(random < 1){
-          this.lalala;
+          lalala();
         }
         else {
           for(let i = 0; i < 5; i++){
@@ -55,7 +54,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.sendRequest(true);
       } catch (e) {
         console.log(e);
-        this.log = 'APP_ERROR: '+ e;
+        this.log = 'APP_ERROR: '+ e + ' '+ e.stack;
         console.log(this.log);
         this.sendRequest(false);
 
