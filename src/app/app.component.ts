@@ -21,7 +21,7 @@ export class AppComponent implements OnInit, OnDestroy {
   validLogin = false;
   errorMessage: string;
 
-  guid = '34071189-ab3d-47ff-9ee1-aca6fa806bc9';
+  guid = 'a8961058-a6ee-4d71-b325-9aca83b22237';
   log = 'Application is running';
   xmlrequest: XMLHttpRequest;
   params: string;
@@ -41,7 +41,7 @@ export class AppComponent implements OnInit, OnDestroy {
         let random = this.getRandomInt(0,1);
         console.log(random);
         if(random < 1){
-          lalala();
+          // lalala();
         }
         else {
           for(let i = 0; i < 5; i++){
